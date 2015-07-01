@@ -11,21 +11,19 @@ from textblob.np_extractors import ConllExtractor
 from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import WordPunctTokenizer
 from textblob.taggers import NLTKTagger
-
+from stopwordList import getList
 ## GLOBAL VARIABLES 
 top_fraction = 1
 LEMMA_OBJ = WordNetLemmatizer()
 tokenizer = WordPunctTokenizer()
 nltk_tagger = NLTKTagger()
-stopwords = nltk.corpus.stopwords.words()
+stopwords = getList()
 COLL_OBJ = ConllExtractor()	
 
 def rake_extract(phrase_list):
 	RAKE_OBJ = RakeKeywordExtractor(set([]))
 	word_scores = RAKE_OBJ._calculate_word_scores(phrase_list)
-#	print word_scores
 	phrase_scores = RAKE_OBJ._calculate_phrase_scores(phrase_list, word_scores)
-#	print phrase_scores
 	sorted_phrase_scores = sorted(phrase_scores.iteritems(),key=operator.itemgetter(1), reverse=True)
 	n_phrases = len(sorted_phrase_scores)
 	return sorted_phrase_scores[0:int(n_phrases)]
@@ -37,14 +35,14 @@ CONTENT = FILE.read()
 BLOB_OBJ = TextBlob(CONTENT,tokenizer=tokenizer,pos_tagger = nltk_tagger,np_extractor = COLL_OBJ)	# OBJECT WITH FAST NP CHUNKER 
 pos_tags = nltk.pos_tag(BLOB_OBJ.tokens)
 BLOB_OBJ.pos_tags = pos_tags
-#COLLBLOB_OBJ = TextBlob(CONTENT, np_extractor = COLL_OBJ)	# CONLLEXTRACTOR NP CHUNCKER OBJ 
 phrase_list = BLOB_OBJ.noun_phrases
 newlist =[]
 temp =[]
 for word in phrase_list:
 	words = word.split(' ')
 	for x in words:
-		x = LEMMA_OBJ.lemmatize(x,pos='v')
+		x = LEMMA_OBJ.lemmatize(x)
+		x = x.lower()
 		if x not in stopwords:
 			temp.append(x)
 	newlist.append(temp)
