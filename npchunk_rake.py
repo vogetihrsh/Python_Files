@@ -12,6 +12,7 @@ from nltk.stem import WordNetLemmatizer
 from nltk.tokenize import WordPunctTokenizer
 from textblob.taggers import NLTKTagger
 from stopwordList import getList
+import codecs
 ## GLOBAL VARIABLES 
 top_fraction = 1
 LEMMA_OBJ = WordNetLemmatizer()
@@ -30,8 +31,10 @@ def rake_extract(phrase_list):
 
 	
 
-FILE = open(sys.argv[1],"r")	
+#FILE = open(sys.argv[1],"r")	
+FILE = codecs.open(sys.argv[1],"r","iso8859-15")	
 CONTENT = FILE.read()
+CONTENT = CONTENT.encode('ascii','ignore')
 BLOB_OBJ = TextBlob(CONTENT,tokenizer=tokenizer,pos_tagger = nltk_tagger,np_extractor = COLL_OBJ)	# OBJECT WITH FAST NP CHUNKER 
 pos_tags = nltk.pos_tag(BLOB_OBJ.tokens)
 BLOB_OBJ.pos_tags = pos_tags

@@ -5,7 +5,7 @@ from rake import RakeKeywordExtractor
 import sys
 from nltk.stem import WordNetLemmatizer
 import re
-
+import codecs
 lemma_obj = WordNetLemmatizer()
 
 def getAdjacencyFrequency(keywordList,content,words):
@@ -14,7 +14,6 @@ def getAdjacencyFrequency(keywordList,content,words):
 	tuple_list = tuple(x[0] for x in keywordList)
 	pattern = re.compile('|'.join(tuple_list));
 	content = pattern.sub(" 1 ",content)
-	print content 
 	NUM = len(keywordList)
 	for i in range(0,NUM):
 			keywords = keywordList[i][0].split(' ')
@@ -46,13 +45,16 @@ def getKeywordFrequency(keywordList):
 	return keyword_freq	
 
 
-f = open(sys.argv[1],'r')
+#f = open(sys.argv[1],'r')
+f = codecs.open(sys.argv[1],'r',"iso8859-15")
 content = f.read()	
+content = content.encode('ascii','ignore')	
+content = re.sub(r"[1-9][0-9]*\.?[0-9]*",'',content)
 rakeObject  = RakeKeywordExtractor(set([]))
 keywordList = rakeObject.extract(content,True)
 words = nltk.word_tokenize(content)
 content_lemmatized = ""	
-words  = list(map(lambda x: lemma_obj.lemmatize(x,pos='v'),words))
+words  = list(map(lambda x: lemma_obj.lemmatize(x),words))
 content_lemmatized = ' '.join(words)
 content = content_lemmatized
 freq = {}
@@ -68,11 +70,12 @@ for key in sortedFreqList:
 	adjacency_freq.setdefault(key[0],0)
 	if(adjacency_freq[key[0]]>keyword_freq[key[0]]):
 		additional_stopwords.append(key[0])
-		print key[0],"freq:",key[1],"adj:",adjacency_freq[key[0]],"keyword:",keyword_freq[key[0]] 
+#	print key[0],"freq:",key[1],"adj:",adjacency_freq[key[0]],"keyword:",keyword_freq[key[0]] 
 additional_stopwords = set(additional_stopwords)
 newRakeObject = RakeKeywordExtractor(additional_stopwords)
 newKeywordList = newRakeObject.extract(content)
-print newKeywordList	
-
+#print newKeywordList	
+for keywords in newKeywordList:
+	print keywords
 
 

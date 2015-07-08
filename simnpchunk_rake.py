@@ -7,7 +7,8 @@ import operator
 from stopwordList import getList
 from nltk.stem import WordNetLemmatizer
 from rake import RakeKeywordExtractor
-
+import codecs
+import re
 def extractNP(CONTENT):
 	stopwords = getList()
 	grammer = r"""
@@ -19,22 +20,30 @@ def extractNP(CONTENT):
 
 		"""
 	chunker = nltk.RegexpParser(grammer)	# create a chunker with the parser
-	words = [w.lower() for w in nltk.word_tokenize(CONTENT)]
-	taggedwords = nltk.pos_tag(words)
-	tree = chunker.parse(taggedwords)
-	words  = []
-	temp = [] 
+#	sentences = nltk.sent_tokenize(CONTENT)
 	lemmaobj = WordNetLemmatizer()
-	for subtree in tree.subtrees():
-		if subtree.label() == "NP":
-			for leaves in subtree.leaves():
-				w = leaves[0].lower()
-				if w not in stopwords:
-					w = lemmaobj.lemmatize(w)
-					temp.append(w)
-			if temp!=[]:		
-				words.append(temp)
+	words  = []
+	paragraphs = [p for p in CONTENT.split('\n') if p]
+	for para in paragraphs:
+		sentences = [s for s in nltk.sent_tokenize(para) if s]
+		for sentence in sentences:
+			print sentence
+			word = [w.lower() for w in nltk.word_tokenize(sentence)]
+			taggedwords = nltk.pos_tag(word)
+			tree = chunker.parse(taggedwords)
 			temp = [] 
+			for subtree in tree.subtrees():
+				if subtree.label() == "NP":
+					for leaves in subtree.leaves():
+						w = leaves[0].lower()
+						if w not in stopwords:
+							w = lemmaobj.lemmatize(w)
+							temp.append(w)
+					if temp!=[]:
+						print temp
+						words.append(temp)
+						temp = []
+	print words			  
 	return words 			
 
 def extractKeywords(phrase_list):
@@ -46,10 +55,11 @@ def extractKeywords(phrase_list):
 	return sorted_phrase_scores[0:int(n_phrases)]
 
 if __name__=="__main__":
-	f = open(sys.argv[1],"r")
+	#f = open(sys.argv[1],"r")
+	f = codecs.open(sys.argv[1],"r","iso8859-15")
 	CONTENT = f.read()
+	CONTENT = CONTENT.encode('ascii','ignore')
+	CONTENT = re.sub(r"[1-9][0-9]*\.?[0-9]*",'',CONTENT)
 	words = extractNP(CONTENT)
 	keywords = extractKeywords(words)
 	print keywords
-	
-
