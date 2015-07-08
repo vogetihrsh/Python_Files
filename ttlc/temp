@@ -1,17 +1,6 @@
-[[u'tax', u'owed'], ["'s", 'better'], ['postage', 'stamp'], ['missing', '1099-int'], ['1099-int'], ['amendment'], ['refund'], ['cost'], ['file'], ['w-2'], ['avoid'], [u'question'], ['add'], ['amended'], ['form'], ['government'], ['safe'], ['1099'], ['hurt'], ['reported'], ['affect'], [u'stay'], ['change'], ['ahead'], ['16'], ['amend'], ['example']]
-this is in if
-['1099']
-1099 
-this is in if
-['amend']
-amend 
-this is in if
-[u'cost']
-cost 
-this is in if
-['refund']
-refund 
-this is in if
-[u'tax', 'owed']
-tax owed 
-set([u'cost ', 'amend ', 'refund ', '1099 ', u'tax owed '])
+refund
+amend
+1099
+1099 int
+cost
+tax owed

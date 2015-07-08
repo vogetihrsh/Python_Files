@@ -11,42 +11,50 @@ class AssignTags:
 		self.lemobj = WordNetLemmatizer()
 		self.worddict = {}
 		self.taglist = []
+		self.taglem = []
 		for tag in tags:
 			words = tag.split(' ')
 			words = words[:-1]
-			self.taglist.append([self.lemobj.lemmatize(word) for word in words])
+			wordlist=[self.lemobj.lemmatize(word) for word in words]
+			self.taglist.append(wordlist)
+			tempstr=""
+			for word in wordlist:
+				tempstr=tempstr+word+" "
+			self.taglem.append(tempstr[:-1])	
 				
 	def getKeywordList(self,question,description):
 		RAKEOBJ = RakeKeywordExtractor()
 		return_list = RAKEOBJ.extract(description,question)
 		keywords = [r for r in return_list]
 		return keywords
+
 	def getTags(self,keywords):
 		predtags=set([])
 		keywordlist = []
 		for keyword in keywords:
 			keywordlist.append(keyword.split(' '))
-		print keywordlist
 ################### check if a tag is completely in a keyword#################################
 		for wordlist in self.taglist:
 			flag=0
-			for keywords in keywordlist:
-				if(set(wordlist)<=set(keywords)):
+			for keyword in keywordlist:
+				if(set(wordlist)<=set(keyword)):
 					flag=1
 					break
 			if(flag==1):
-				print "this is in if"
-				print wordlist
 				tempstr=""
 				for s in wordlist:
 					tempstr=tempstr+s+ " "
-				print tempstr	
-				predtags.add(tempstr)
-		print predtags		
+				predtags.add(tempstr[:-1])
+		#print predtags
 ############################################## step completed###############################		
-					
+		predtags_for_each=set([])
+		for keyword in keywords:
+			for tag in self.taglem:
+				score = distance.nlevenshtein(tag,keyword)
+				if(0.2 > score):
+			  		predtags.add(tag)
+		return predtags	
 				
-		# check if a tag is completely in a keyword
 		# for each keyword see the tag with minimum value, 
 					
 
@@ -61,6 +69,7 @@ if __name__=="__main__":
 		tags.append(line[:-1])
 	obj = AssignTags(tags)
 	keywords=obj.getKeywordList(question,description)
-	obj.getTags(keywords)
-	
+	tags=obj.getTags(keywords)
+	for tag in tags:
+		print tag
 		
