@@ -8,7 +8,7 @@ from nltk.stem import WordNetLemmatizer
 import operator
 import nltk
 import string
-
+from stopwordList import getList
 
 def isPunct(word):
   return len(word) == 1 and word in string.punctuation
@@ -23,8 +23,9 @@ def isNumeric(word):
 class RakeKeywordExtractor:
 
   def __init__(self):
-    self.stopwords = set(nltk.corpus.stopwords.words())
-    self.top_fraction = 1 # consider top third candidate keywords by score
+	# self.stopwords = set(nltk.corpus.stopwords.words())
+	self.stopwords  = getList()  
+	self.top_fraction = 1 # consider top third candidate keywords by score
 
   def _generate_candidate_keywords(self, sentences):
     phrase_list = []
@@ -39,7 +40,7 @@ class RakeKeywordExtractor:
             phrase_list.append(phrase)
             phrase = []
         else:
-          phrase.append(lemma_obj.lemmatize(word,pos='v'))
+          phrase.append(lemma_obj.lemmatize(word))
     return phrase_list
 
   def _calculate_word_scores(self, phrase_list):
