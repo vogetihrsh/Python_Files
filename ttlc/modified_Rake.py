@@ -25,7 +25,7 @@ class RakeKeywordExtractor:
   def __init__(self):
 	# self.stopwords = set(nltk.corpus.stopwords.words())
 	self.stopwords  = getList()  
-	self.top_fraction = 1 # consider top third candidate keywords by score
+	self.top_fraction = 2 # consider top third candidate keywords by score
 
   def _generate_candidate_keywords(self, sentences):
     phrase_list = []

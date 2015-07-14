@@ -1,0 +1,16 @@
+Problem Introduction and motivation
+rake and stoplist generation 
+npchunking and rake ranking 
+simchunking
+automatic tagging 
+tf-idf on twitter data
+ngrams on twitter data and mapping them to the faqs 
+
+tools and libraries 
+tweepy
+wit.ai
+scikit
+nltk
+textblob
+GATE package
+

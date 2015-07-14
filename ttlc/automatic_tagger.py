@@ -24,7 +24,7 @@ class AssignTags:
 				
 	def getKeywordList(self,question,description):
 		RAKEOBJ = RakeKeywordExtractor()
-		return_list = RAKEOBJ.extract(description,question)
+		return_list = RAKEOBJ.extract(description,question,True)
 		keywords = [r for r in return_list]
 		return keywords
 
@@ -69,7 +69,8 @@ if __name__=="__main__":
 		tags.append(line[:-1])
 	obj = AssignTags(tags)
 	keywords=obj.getKeywordList(question,description)
-	tags=obj.getTags(keywords)
-	for tag in tags:
-		print tag
+	print keywords
+#	tags=obj.getTags(keywords)
+#	for tag in tags:
+#		print tag
 		
