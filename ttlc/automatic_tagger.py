@@ -1,5 +1,12 @@
 #AUTOMATIC TAGGER REQUEIRES MAPS A TTLC QUERY TO ONE OR MANY GIVEN 
-
+# Author : Sriharsha
+"""
+TAKES TWO COMMAND LINE ARGUMENTS 
+THE FIRST COMMAND LINE ARGUMENT IS THE TAG LIST AND THE SECOND IS A FILE CONTANING SINGLE TTLC POST
+IT IS ASSUMED THE FILE CONTANING TTLC POST HAS QUESTION IN THE FIRST LINE FOLLOWED BY THE DESCRIPTION OF THE QUESTION
+CALLS THE CLASS IN MODIFIED_RAKE.PY FILE
+THE OUTPUT WOULD BE SET OF TAGS FOR THAT POST 
+"""
 from modified_Rake import RakeKeywordExtractor
 import nltk
 import distance
@@ -12,19 +19,26 @@ class AssignTags:
 		self.worddict = {}
 		self.taglist = []
 		self.taglem = []
+		i=0
 		for tag in tags:
 			words = tag.split(' ')
 			words = words[:-1]
 			wordlist=[self.lemobj.lemmatize(word) for word in words]
-			self.taglist.append(wordlist)
+			array = []
+			array.append(wordlist)
+			array.append(i)
+			self.taglist.append(array)
 			tempstr=""
 			for word in wordlist:
 				tempstr=tempstr+word+" "
-			self.taglem.append(tempstr[:-1])	
-				
+			array=[]
+			array.append(tempstr[:-1])
+			array.append(i)
+			self.taglem.append(array)	
+			i=i+1	
 	def getKeywordList(self,question,description):
 		RAKEOBJ = RakeKeywordExtractor()
-		return_list = RAKEOBJ.extract(description,question,True)
+		return_list = RAKEOBJ.extract(description,question,False)
 		keywords = [r for r in return_list]
 		return keywords
 
@@ -37,23 +51,18 @@ class AssignTags:
 		for wordlist in self.taglist:
 			flag=0
 			for keyword in keywordlist:
-				if(set(wordlist)<=set(keyword)):
+				if(set(wordlist[0])<=set(keyword)):
 					flag=1
 					break
 			if(flag==1):
-				tempstr=""
-				for s in wordlist:
-					tempstr=tempstr+s+ " "
-				predtags.add(tempstr[:-1])
-		#print predtags
+				predtags.add(self.tags[wordlist[1]])
 ############################################## step completed###############################		
-		predtags_for_each=set([])
 		for keyword in keywords:
 			for tag in self.taglem:
-				score = distance.nlevenshtein(tag,keyword)
+				score = distance.nlevenshtein(tag[0],keyword)
 				if(0.2 > score):
-			  		predtags.add(tag)
-		return predtags	
+			  		predtags.add(self.tags[tag[1]])
+		return set(predtags)
 				
 		# for each keyword see the tag with minimum value, 
 					
@@ -69,8 +78,8 @@ if __name__=="__main__":
 		tags.append(line[:-1])
 	obj = AssignTags(tags)
 	keywords=obj.getKeywordList(question,description)
-	print keywords
-#	tags=obj.getTags(keywords)
-#	for tag in tags:
-#		print tag
+#	print keywords
+	tags=obj.getTags(keywords)
+	for tag in tags:
+		print tag
 		
